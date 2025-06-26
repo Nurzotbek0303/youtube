@@ -18,7 +18,12 @@ app = FastAPI(
     title="YouTube", openapi_url="/fastapi/loyiha/youtube/clone", docs_url="/"
 )
 
-Base.metadata.create_all(bind=engine)
+
+@app.on_event("startup")
+async def on_startup():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
 
 app.include_router(user_router, tags=["User"], prefix="/user")
 app.include_router(channel_router, tags=["Channel"], prefix="/channel")

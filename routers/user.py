@@ -17,7 +17,6 @@ async def royxatdan_otish(form: SchemasUser, db: AsyncSession = Depends(database
     try:
         await create_user(form, db)
         return {"message": "Foydananuvchi qoshildi."}
-
     except Exception as err:
         return {"message": "Xatolik bor!", "Error": str(err)}
 

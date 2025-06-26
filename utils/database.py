@@ -21,20 +21,28 @@
 #             await db.close()
 
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import declarative_base
+from sqlalchemy.ext.asyncio import async_sessionmaker
 
-engine = create_engine(
-    "sqlite:///./database.db", connect_args={"check_same_thread": False}
+# Asinxron SQLite engine
+DATABASE_URL = "sqlite+aiosqlite:///./database.db"
+
+engine = create_async_engine(DATABASE_URL, echo=True)
+
+# Asinxron sessiya yaratuvchi
+AsyncSessionLocal = async_sessionmaker(
+    bind=engine, class_=AsyncSession, expire_on_commit=False
 )
-SessionLocal = sessionmaker(bind=engine)
+
+# ORM modellari uchun asosiy klass
 Base = declarative_base()
 
 
-def database():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# Dependency
+async def database():
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
