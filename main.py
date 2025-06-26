@@ -11,11 +11,14 @@ from routers.playlist_video import playlist_video_router
 from routers.shorts import shorts_router
 from routers.auth import login_router
 from fastapi.staticfiles import StaticFiles
+from utils.database import engine, Base
 
 
 app = FastAPI(
     title="YouTube", openapi_url="/fastapi/loyiha/youtube/clone", docs_url="/"
 )
+
+Base.metadata.create_all(bind=engine)
 
 app.include_router(user_router, tags=["User"], prefix="/user")
 app.include_router(channel_router, tags=["Channel"], prefix="/channel")
