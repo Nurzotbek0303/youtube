@@ -134,9 +134,6 @@ async def video_tahrirlash(
         return {"message": "Xatolik bor!", "Error": str(err)}
 
 
-from sqlalchemy import delete
-
-
 @video_router.delete("/delete_video")
 async def video_ochirish(
     video_id: int,

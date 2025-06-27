@@ -1,5 +1,4 @@
-from fastapi import HTTPException
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import update
 
 from sqlalchemy.future import select
@@ -12,10 +11,12 @@ async def create_subscription(form, db, current_user):
     await check_channel(db, Channel, form)
     await check_have_channel(db, Subscription, form, current_user)
 
+    now = datetime.now(timezone.utc)
+
     new_subscription = Subscription(
         subscriber_id=current_user.id,
         channel_id=form.channel_id,
-        created_at=datetime.now(),
+        created_at=now,
     )
 
     db.add(new_subscription)

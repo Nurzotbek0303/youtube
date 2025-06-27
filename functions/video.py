@@ -1,12 +1,12 @@
 from fastapi import HTTPException
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import update
 from models.video import Video
 from sqlalchemy.future import select
 from utils.save_video import video_upload
 from models.channel import Channel
 from models.video import Video
-from utils.check import check_channel, check_channel_video
+from utils.check import check_channel_video
 
 
 async def create_vidyo(form, vidyo, db, current_user):
@@ -21,6 +21,8 @@ async def create_vidyo(form, vidyo, db, current_user):
 
     video_path, thumbnail_path = await video_upload(vidyo)
 
+    now = datetime.now(timezone.utc)
+
     new_vidyo = Video(
         channel_id=result.id,
         title=form.title,
@@ -28,7 +30,7 @@ async def create_vidyo(form, vidyo, db, current_user):
         file_path=video_path,
         thumbnail_path=thumbnail_path,
         category=form.category,
-        created_at=datetime.now(),
+        created_at=now,
     )
     db.add(new_vidyo)
     await db.commit()

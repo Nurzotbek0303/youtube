@@ -37,9 +37,9 @@ async def faqat_mening_playlistlarim(
         playlist = (
             select(
                 Playlist.id,
-                Channel.name,
+                Channel.name.label("channel_name"),
                 Channel.profile_image,
-                Playlist.name,
+                Playlist.name.label("playlist_name"),
                 Playlist.is_personal,
             )
             .select_from(Playlist)
@@ -52,9 +52,9 @@ async def faqat_mening_playlistlarim(
         return [
             {
                 "id": row.id,
-                "name": row.name,
+                "channel_name": row.channel_name,
+                "playlist_name": row.playlist_name,
                 "is_personal": row.is_personal,
-                "channel_name": row.name,
                 "image": row.profile_image,
             }
             for row in rows
@@ -69,9 +69,9 @@ async def barcha_korishi_mumkin(db: AsyncSession = Depends(database)):
         playlist = (
             select(
                 Playlist.id,
-                Channel.name,
+                Channel.name.label("channel_name"),
                 Channel.profile_image,
-                Playlist.name,
+                Playlist.name.label("playlist_name"),
                 Playlist.is_personal,
             )
             .select_from(Playlist)
@@ -84,9 +84,9 @@ async def barcha_korishi_mumkin(db: AsyncSession = Depends(database)):
         return [
             {
                 "id": row.id,
-                "name": row.name,
+                "channel_name": row.channel_name,
+                "playlist_name": row.playlist_name,
                 "is_personal": row.is_personal,
-                "channel_name": row.name,
                 "image": row.profile_image,
             }
             for row in rows
@@ -95,16 +95,16 @@ async def barcha_korishi_mumkin(db: AsyncSession = Depends(database)):
         return {"message": "Xatolik yuz berdi", "error": str(err)}
 
 
-@playlist_router.put("/put_playlist")
+@playlist_router.put("/put_playlist/{playlist_id}")
 async def playlist_tahrirlash(
+    playlist_id: int,
     form: SchemasPlaylist,
     db: AsyncSession = Depends(database),
     current_user: SchemasUser = Depends(get_current_active_user),
 ):
     try:
-        await update_playlist(form, db, current_user)
+        await update_playlist(playlist_id, form, db, current_user)
         return {"message": "Playlist tahrirlandi."}
-
     except Exception as err:
         return {"message": "Xatolik yuz berdi", "error": str(err)}
 

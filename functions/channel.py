@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import update
 
 from models.channel import Channel
@@ -19,11 +19,13 @@ async def create_channel(form, db, current_user):
     if result:
         raise HTTPException(400, "Siz allaqachon kanal yaratgansiz.")
 
+    now = datetime.now(timezone.utc)
+
     new_channel = Channel(
         user_id=current_user.id,
         name=form.name,
         description=form.description,
-        created_at=datetime.now(),
+        created_at=now,
     )
     db.add(new_channel)
     await db.commit()

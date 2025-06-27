@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import update
 
 from sqlalchemy.future import select
@@ -12,11 +12,13 @@ async def create_user(form, db):
     await check_username(db, User, form)
     await check_email(db, User, form)
 
+    now = datetime.now(timezone.utc)
+
     new_user = User(
         username=form.username,
         email=form.email,
         password=get_password_hash(form.password),
-        create_at=datetime.now(),
+        create_at=now,
     )
     db.add(new_user)
     await db.commit()

@@ -21,7 +21,6 @@ class HistoryResponse(BaseModel):
     def vaqt_tahrirlash(self, value: datetime, _info):
         tashkent_tz = pytz.timezone("Asia/Tashkent")
         if value.tzinfo is None:
-
             value = pytz.utc.localize(value)
 
         tashkent_time = value.astimezone(tashkent_tz)
