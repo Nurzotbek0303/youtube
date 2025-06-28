@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+
+from fastapi.middleware.cors import CORSMiddleware
 from routers.user import user_router
 from routers.channel import channel_router
 from routers.subscription import subscription_router
@@ -25,6 +27,13 @@ async def on_startup():
         await conn.run_sync(Base.metadata.create_all)
 
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(user_router, tags=["User"], prefix="/user")
 app.include_router(channel_router, tags=["Channel"], prefix="/channel")
 app.include_router(subscription_router, tags=["Subscription"], prefix="/subscription")
