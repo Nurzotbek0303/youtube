@@ -8,7 +8,6 @@ from utils.check import check_video, check_comment
 
 
 async def create_comment(form, db, current_user):
-    await check_comment(db, Comment, form, current_user)
     await check_video(db, Video, form)
 
     now = datetime.now(timezone.utc)
