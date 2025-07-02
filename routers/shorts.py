@@ -37,6 +37,7 @@ async def shorts_vidyo_korish(db: AsyncSession = Depends(database)):
                 Shorts.thumbnail_path,
                 Channel.name,
                 Channel.profile_image,
+                Shorts.created_at,
             )
             .select_from(Shorts)
             .join(Channel, Channel.id == Shorts.channel_id)
@@ -49,8 +50,9 @@ async def shorts_vidyo_korish(db: AsyncSession = Depends(database)):
                 "id": row.id,
                 "video_url": row.video_url,
                 "thumbnail_path": row.thumbnail_path,
-                "name": row.name,
+                "channel_name": row.name,
                 "profile_image": row.profile_image,
+                "created_at": row.created_at,
             }
             for row in rows
         ]

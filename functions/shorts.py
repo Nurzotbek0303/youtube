@@ -15,7 +15,7 @@ async def create_shorts(video, db, current_user):
     if not channel:
         raise HTTPException(403, "Siz ushbu kanalga shorts yuklay olmaysiz.")
 
-    video_url, thumbnail_path = await video_upload(video)
+    video_url, thumbnail_path, duration_video = await video_upload(video)
     now = datetime.now(timezone.utc)
 
     new_shorts = Shorts(

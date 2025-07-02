@@ -19,7 +19,7 @@ async def create_vidyo(form, vidyo, db, current_user):
     if not result:
         raise HTTPException(404, "Bunday kanal mavjud emas.")
 
-    video_path, thumbnail_path = await video_upload(vidyo)
+    video_path, thumbnail_path, duration_video = await video_upload(vidyo)
 
     now = datetime.now(timezone.utc)
 
@@ -31,6 +31,7 @@ async def create_vidyo(form, vidyo, db, current_user):
         thumbnail_path=thumbnail_path,
         category=form.category,
         created_at=now,
+        duration_video=duration_video,
     )
     db.add(new_vidyo)
     await db.commit()

@@ -4,7 +4,7 @@ from sqlalchemy import delete
 from sqlalchemy.future import select
 from utils.database import database
 from models.user import User
-from schemas.user import SchemasUser, UserResponse
+from schemas.user import SchemasUser
 from sqlalchemy.ext.asyncio import AsyncSession
 from routers.auth import get_current_active_user
 from functions.user import create_user, create_photo, update_user, update_photo
@@ -46,14 +46,14 @@ async def royxad_korish(
     if not result:
         raise HTTPException(404, "Foydalanuvchi topilmadi")
 
-    return UserResponse(
-        username=result.username,
-        email=result.email,
-        password=result.password,
-        create_at=result.create_at,
-        image=result.image,
-        id=result.id,
-    )
+    return {
+        "id": result.id,
+        "username": result.username,
+        "email": result.email,
+        "password": result.password,
+        "create_at": result.create_at,
+        "user_image": result.image,
+    }
 
 
 @user_router.put("/put_user")

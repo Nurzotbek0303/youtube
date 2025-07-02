@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Float
 from utils.database import Base
 
 
@@ -15,3 +15,5 @@ class Video(Base):
     views = Column(Integer, default=0, nullable=False)
     created_at = Column(DateTime(timezone=True), nullable=False)
     like_amount = Column(Integer, default=0, nullable=False)
+    duration_video = Column(Float, nullable=True)
+    dislike_amount = Column(Integer, nullable=False, default=0)

@@ -6,7 +6,7 @@ from models.channel import Channel
 from models.video import Video
 from models.user import User
 from schemas.user import SchemasUser
-from schemas.history import SchemasHistory, HistoryResponse
+from schemas.history import SchemasHistory
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from utils.database import database
@@ -41,11 +41,11 @@ async def tomosha_tarixi(
         query = (
             select(
                 History.id,
-                User.username,
-                Channel.name.label("name"),
+                Channel.name.label("channel_name"),
                 Video.title,
-                Video.file_path,
                 Video.thumbnail_path,
+                Video.description,
+                Video.id.label("video_id"),
                 Video.views,
                 History.watched_at,
             )
@@ -62,7 +62,19 @@ async def tomosha_tarixi(
         if not rows:
             raise HTTPException(404, detail="Tarix topilmadi.")
 
-        return [HistoryResponse(**row._mapping) for row in rows]
+        return [
+            {
+                "id": row.id,
+                "channel_name": row.channel_name,
+                "video_title": row.title,
+                "thumbnail_path": row.thumbnail_path,
+                "video_description": row.description,
+                "video_id": row.video_id,
+                "views": row.views,
+                "watched_at": row.watched_at,
+            }
+            for row in rows
+        ]
 
     except Exception as err:
         return {"message": "Xatolik bor!", "Error": str(err)}

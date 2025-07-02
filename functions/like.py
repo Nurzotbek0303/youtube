@@ -27,4 +27,10 @@ async def create_like(form, db, current_user):
             .values(like_amount=Video.like_amount + 1)
         )
 
+    else:
+        await db.execute(
+            update(Video)
+            .where(Video.id == form.video_id)
+            .values(dislike_amount=Video.dislike_amount + 1)
+        )
     await db.commit()

@@ -1,7 +1,6 @@
 from datetime import datetime, timezone
 from sqlalchemy import update
 
-from sqlalchemy.future import select
 from models.subscription import Subscription
 from models.channel import Channel
 from utils.check import check_channel, check_have_channel

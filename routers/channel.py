@@ -4,7 +4,7 @@ from sqlalchemy import delete
 from sqlalchemy.future import select
 from utils.database import database
 from models.channel import Channel
-from schemas.channel import SchemasChannel, ChannelResponse, ScemasChannelResponse
+from schemas.channel import SchemasChannel
 from schemas.user import SchemasUser
 from sqlalchemy.ext.asyncio import AsyncSession
 from routers.auth import get_current_active_user
@@ -77,16 +77,16 @@ async def kanal_korish(
         if not result:
             raise HTTPException(404, "Kanal topilmadi")
 
-        return ChannelResponse(
-            id=result.id,
-            user_id=result.user_id,
-            name=result.name,
-            description=result.description,
-            profile_image=result.profile_image,
-            banner_image=result.banner_image,
-            created_at=result.created_at,
-            subscription_amount=result.subscription_amount,
-        )
+        return {
+            "id": result.id,
+            "user_id": result.user_id,
+            "channel_name": result.name,
+            "channel_description": result.description,
+            "profile_image": result.profile_image,
+            "banner_image": result.banner_image,
+            "created_at": result.created_at,
+            "subscription_amount": result.subscription_amount,
+        }
 
     except Exception as err:
         return {"message": "Xatolik bor!", "Error": str(err)}
@@ -100,7 +100,19 @@ async def kanalni_korish_barchaga(
         if name is None:
             result = await db.execute(select(Channel))
             channels = result.scalars().all()
-            return [ScemasChannelResponse.from_orm(channel) for channel in channels]
+            return [
+                {
+                    "id": row.id,
+                    "user_id": row.user_id,
+                    "channel_name": row.name,
+                    "channel_description": row.description,
+                    "profile_image": row.profile_image,
+                    "banner_image": row.banner_image,
+                    "created_at": row.created_at,
+                    "subscription_amount": row.subscription_amount,
+                }
+                for row in channels
+            ]
 
         channel = await db.execute(select(Channel).where(Channel.name == name))
         result = channel.scalar_one_or_none()
@@ -108,7 +120,15 @@ async def kanalni_korish_barchaga(
         if not result:
             raise HTTPException(404, "Bunday kanal mavjud emas.")
 
-        return ScemasChannelResponse.from_orm(result)
+        return {
+            "id": result.id,
+            "channel_name": result.name,
+            "channel_description": result.description,
+            "profile_image": result.profile_image,
+            "banner_image": result.banner_image,
+            "created_at": result.created_at,
+            "subscription_amount": result.subscription_amount,
+        }
 
     except Exception as err:
         return {"message": "Xatolik bor!", "Error": str(err)}

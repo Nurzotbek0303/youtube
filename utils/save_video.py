@@ -28,9 +28,9 @@ async def video_upload(file: UploadFile) -> tuple[str, str]:
 
     try:
         clip = VideoFileClip(video_path)
-        duration = clip.duration
+        duration_video = clip.duration
 
-        screenshot_time = 5 if duration > 5 else duration / 2
+        screenshot_time = 5 if duration_video > 5 else duration_video / 2
         thumbnail_filename = f"{timestamp}_{unique_id}.jpg"
         thumbnail_path = os.path.join(THUMBNAIL_DIR, thumbnail_filename)
 
@@ -40,4 +40,4 @@ async def video_upload(file: UploadFile) -> tuple[str, str]:
     except Exception as e:
         raise HTTPException(500, f"Thumbnail olishda xatolik: {e}")
 
-    return video_path, thumbnail_path
+    return video_path, thumbnail_path, duration_video

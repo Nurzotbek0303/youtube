@@ -6,11 +6,7 @@ from utils.database import database
 from models.subscription import Subscription
 from models.channel import Channel
 from models.user import User
-from schemas.subscription import (
-    SchemasSubscription,
-    SubscriptionResponse,
-    SubscriptionUser,
-)
+from schemas.subscription import SchemasSubscription
 from schemas.user import SchemasUser
 from sqlalchemy.ext.asyncio import AsyncSession
 from routers.auth import get_current_active_user
@@ -59,7 +55,17 @@ async def obuna_bolgan_kanallarim(
         if not data:
             raise HTTPException(404, "Siz hech qanday kanalga obuna emassiz.")
 
-        return [SubscriptionResponse(**row._mapping) for row in data]
+        return [
+            {
+                "id": row.id,
+                "channel_name": row.name,
+                "channel_profile_image": row.profile_image,
+                "channel_subscription_amount": row.subscription_amount,
+                "username": row.username,
+                "created_at": row.created_at,
+            }
+            for row in data
+        ]
 
     except Exception as err:
         return {"message": "Xatolik bor!", "Error": str(err)}
@@ -95,7 +101,16 @@ async def obuna_bolganlarni_korish(
         result = await db.execute(stmt)
         rows = result.all()
 
-        return [SubscriptionUser(**row._mapping) for row in rows]
+        return [
+            {
+                "id": row.id,
+                "username": row.username,
+                "user_image": row.image,
+                "channel_name": row.name,
+                "created_at": row.created_at,
+            }
+            for row in rows
+        ]
 
     except Exception as err:
         return {"message": "Xatolik bor!", "Error": str(err)}

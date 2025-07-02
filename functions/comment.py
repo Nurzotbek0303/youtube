@@ -1,10 +1,9 @@
 from datetime import datetime, timezone
 from sqlalchemy import update
 
-from sqlalchemy.future import select
 from models.comment import Comment
 from models.video import Video
-from utils.check import check_video, check_comment
+from utils.check import check_video
 
 
 async def create_comment(form, db, current_user):
@@ -23,7 +22,6 @@ async def create_comment(form, db, current_user):
 
 
 async def update_comment(form, db, current_user):
-    await check_video(db, Video, form)
 
     await db.execute(
         update(Comment)

@@ -1,8 +1,6 @@
 from fastapi import Form
 from enum import Enum
-from pydantic import BaseModel, field_serializer
-from datetime import datetime
-import pytz
+from pydantic import BaseModel
 
 
 class Category(str, Enum):
@@ -49,28 +47,3 @@ class SchemasVideo(BaseModel):
             description=description,
             category=category,
         )
-
-
-class VidyoResponse(BaseModel):
-    id: int
-    name: str
-    profile_image: str | None
-    title: str
-    description: str
-    file_path: str
-    thumbnail_path: str
-    category: Category
-    views: int
-    created_at: datetime
-    like_amount: int
-
-    @field_serializer("created_at")
-    def vaqt_tahrirlash(self, value: datetime, _info):
-        tashkent_tz = pytz.timezone("Asia/Tashkent")
-        if value.tzinfo is None:
-            value = pytz.utc.localize(value)
-
-        tashkent_time = value.astimezone(tashkent_tz)
-        return tashkent_time.strftime("%d.%m.%Y %H:%M:%S")
-
-    model_config = {"from_attributes": True}

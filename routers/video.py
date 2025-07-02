@@ -6,7 +6,8 @@ from utils.database import database
 from models.video import Video
 from models.channel import Channel
 from schemas.user import SchemasUser
-from schemas.video import SchemasVideo, VidyoResponse, UpdateVideo, Category
+from models.comment import Comment
+from schemas.video import SchemasVideo, UpdateVideo, Category
 from sqlalchemy.ext.asyncio import AsyncSession
 from routers.auth import get_current_active_user
 from functions.video import create_vidyo, update_video
@@ -49,6 +50,8 @@ async def meni_videolarim(
                 Video.views,
                 Video.created_at,
                 Video.like_amount,
+                Video.duration_video,
+                Video.dislike_amount,
             )
             .select_from(Video)
             .join(Channel, Channel.id == Video.channel_id)
@@ -59,7 +62,24 @@ async def meni_videolarim(
         if not rows:
             raise HTTPException(404, "Video topilmadi.")
 
-        return [VidyoResponse(**row._mapping) for row in rows]
+        return [
+            {
+                "id": row.id,
+                "name": row.name,
+                "profile_image": row.profile_image,
+                "title": row.title,
+                "description": row.description,
+                "file_path": row.file_path,
+                "thumbnail_path": row.thumbnail_path,
+                "category": row.category,
+                "views": row.views,
+                "created_at": row.created_at,
+                "like_amount": row.like_amount,
+                "duration_video": row.duration_video,
+                "dislike_amount": row.dislike_amount,
+            }
+            for row in rows
+        ]
 
     except Exception as err:
         return {"message": "Xatolik bor!", "Error": str(err)}
@@ -95,6 +115,7 @@ async def videolar_korish(
                 Video.views.label("views"),
                 Video.created_at,
                 Video.like_amount,
+                Video.duration_video,
             )
             .select_from(Video)
             .join(Channel, Channel.id == Video.channel_id)
@@ -111,13 +132,82 @@ async def videolar_korish(
             row = result.first()
             if not row:
                 raise HTTPException(404, "Video topilmadi.")
-            return VidyoResponse(**row._mapping)
+            return {
+                "id": row.id,
+                "channel_name": row.name,
+                "profile_image": row.profile_image,
+                "video_title": row.title,
+                "video_description": row.description,
+                "file_path": row.file_path,
+                "thumbnail_path": row.thumbnail_path,
+                "category": row.category,
+                "video_views": row.views,
+                "created_at": row.created_at,
+                "like_amount": row.like_amount,
+                "duration_video": row.duration_video,
+            }
 
         rows = result.all()
-        return [VidyoResponse(**row._mapping) for row in rows]
+
+        return [
+            {
+                "id": data.id,
+                "channel_name": data.name,
+                "profile_image": data.profile_image,
+                "video_title": data.title,
+                "video_description": data.description,
+                "file_path": data.file_path,
+                "thumbnail_path": data.thumbnail_path,
+                "category": data.category,
+                "video_views": data.views,
+                "created_at": data.created_at,
+                "like_amount": data.like_amount,
+                "duration_video": data.duration_video,
+            }
+            for data in rows
+        ]
 
     except Exception as err:
         return {"message": "Xatolik bor!", "Error": str(err)}
+
+
+@video_router.get("/video_comment")
+async def video_comment_korish(video_id: int, db: AsyncSession = Depends(database)):
+    try:
+        video = await db.execute(select(Video).where(Video.id == video_id))
+        result = video.scalar()
+        if not result:
+            raise HTTPException(404, "Bunday video mavjud emas.")
+
+        query = (
+            select(
+                Video.id.label("video_id"),
+                Comment.comment,
+                Channel.name.label("channel_name"),
+                Comment.id.label("comment_id"),
+                Comment.created_at,
+            )
+            .join(Comment, Comment.video_id == Video.id)
+            .join(Channel, Channel.id == Video.channel_id)
+            .where(Video.id == video_id)
+        )
+
+        result_video = await db.execute(query)
+        rows = result_video.all()
+
+        return [
+            {
+                "id": row.video_id,
+                "comment": row.comment,
+                "channel_name": row.channel_name,
+                "comment_id": row.comment_id,
+                "created_at": row.created_at,
+            }
+            for row in rows
+        ]
+
+    except Exception as err:
+        return {"message": "Xatolik bor!", "error": str(err)}
 
 
 @video_router.put("/put_video")
