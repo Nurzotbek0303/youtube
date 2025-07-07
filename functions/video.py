@@ -37,7 +37,7 @@ async def create_vidyo(form, vidyo, db, current_user):
     await db.commit()
 
 
-async def update_video(form, db, current_user):
+async def update_video(ident, form, db, current_user):
     channel = await db.execute(
         select(Channel).where(Channel.user_id == current_user.id)
     )
@@ -46,15 +46,17 @@ async def update_video(form, db, current_user):
     if result is None:
         raise HTTPException(400, "Sizning kanal topilmadi. Avval kanal yarating.")
 
-    video = await db.execute(select(Video).where(Video.channel_id == result.id))
-    video_result = video.scalar()
+    video_ident = await db.execute(
+        select(Video).where(Video.id == ident, Video.channel_id == result.id)
+    )
+    result_ident = video_ident.scalar()
 
-    if video_result is None:
-        raise HTTPException(404, "Sizning videongiz topilmadi.")
+    if not result_ident:
+        raise HTTPException(404, "Sizda bu IDga tegishli video mavjud emas.")
 
     await db.execute(
         update(Video)
-        .where(Video.channel_id == result.id)
+        .where(Video.id == ident)
         .values(
             title=form.title,
             description=form.description,

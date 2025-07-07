@@ -48,5 +48,6 @@ app.include_router(
 app.include_router(shorts_router, tags=["Shorts"], prefix="/shorts")
 app.include_router(login_router)
 
+
 app.mount("/images", StaticFiles(directory="images"), name="images")
 app.mount("/videos", StaticFiles(directory="videos"), name="videos")

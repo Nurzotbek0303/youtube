@@ -212,12 +212,13 @@ async def video_comment_korish(video_id: int, db: AsyncSession = Depends(databas
 
 @video_router.put("/put_video")
 async def video_tahrirlash(
+    ident: int,
     form: UpdateVideo,
     db: AsyncSession = Depends(database),
     current_user: SchemasUser = Depends(get_current_active_user),
 ):
     try:
-        await update_video(form, db, current_user)
+        await update_video(ident, form, db, current_user)
         return {"message": "Video tahrirlasndi."}
 
     except Exception as err:
