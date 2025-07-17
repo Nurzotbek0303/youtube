@@ -26,7 +26,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 # Asinxron SQLite engine
-DATABASE_URL = "sqlite+aiosqlite:///./database.db"
+DATABASE_URL = "sqlite+aiosqlite:///./mydb.db"
 
 engine = create_async_engine(DATABASE_URL, echo=True)
 

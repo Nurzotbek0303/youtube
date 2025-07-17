@@ -1,6 +1,8 @@
 from fastapi import Form
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Optional
+from datetime import datetime
 
 
 class Category(str, Enum):
@@ -25,8 +27,8 @@ class Category(str, Enum):
 
 
 class UpdateVideo(BaseModel):
-    title: str
-    description: str
+    title: str = Field(..., min_length=1, max_length=100)
+    description: str = Field(..., min_length=1, max_length=1000)
     category: Category
 
 
@@ -47,3 +49,42 @@ class SchemasVideo(BaseModel):
             description=description,
             category=category,
         )
+
+
+class MyVideoResp(BaseModel):
+    id: int
+    name: str
+    profile_image: Optional[str] = ""
+    title: str
+    description: str
+    file_path: Optional[str] = ""
+    thumbnail_path: Optional[str] = ""
+    category: Category
+    views: int
+    created_at: datetime
+    like_amount: int
+    duration_video: float
+    dislike_amount: int
+
+
+class VideoResp(BaseModel):
+    id: int
+    channel_name: str
+    profile_image: Optional[str] = ""
+    video_title: str
+    video_description: str
+    file_path: Optional[str] = ""
+    thumbnail_path: Optional[str] = ""
+    category: Category
+    video_views: int
+    created_at: datetime
+    like_amount: int
+    duration_video: float
+
+
+class CommentResp(BaseModel):
+    id: int
+    comment: str
+    channel_name: str
+    comment_id: int
+    created_at: datetime

@@ -10,3 +10,7 @@ class Shorts(Base):
     video_url = Column(String(255), nullable=True)
     thumbnail_path = Column(String(255), nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=False)
+    # qoshilyapti
+    dislike_amount = Column(Integer, default=0, nullable=False)
+    like_amount = Column(Integer, default=0, nullable=False)
+    views = Column(Integer, default=0, nullable=False)

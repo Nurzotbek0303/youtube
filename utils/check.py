@@ -6,28 +6,28 @@ async def check_username(db, model, form):
     username = await db.execute(select(model).where(model.username == form.username))
     result = username.scalar_one_or_none()
     if result:
-        raise HTTPException(400, "Bunday username mavjud qaytadan urinib koring.")
+        raise HTTPException(409, "Bunday username mavjud qaytadan urinib koring.")
 
 
 async def check_email(db, model, form):
     email = await db.execute(select(model).where(model.email == form.email))
     result = email.scalar_one_or_none()
     if result:
-        raise HTTPException(400, "Bunday email mavjud qaytadan urinib koring.")
+        raise HTTPException(409, "Bunday email mavjud qaytadan urinib koring.")
 
 
 async def check_name(db, model, form):
     name = await db.execute(select(model).where(model.name == form.name))
     result = name.scalar_one_or_none()
     if result:
-        raise HTTPException(400, "Bunday name mavjud qaytadan urinib koring.")
+        raise HTTPException(409, "Bunday name mavjud qaytadan urinib koring.")
 
 
 async def check_channel(db, model, form):
     channel = await db.execute(select(model).where(model.id == form.channel_id))
     result = channel.scalar_one_or_none()
     if not result:
-        raise HTTPException(400, "Bunday kanal mavjud emas.")
+        raise HTTPException(404, "Bunday kanal mavjud emas.")
 
 
 async def check_have_channel(db, model, form, current_user):
@@ -38,7 +38,7 @@ async def check_have_channel(db, model, form, current_user):
     )
     result = subscription.scalar_one_or_none()
     if result:
-        raise HTTPException(400, "Siz allaqachon bu kanalga obuna bo'lgansiz.")
+        raise HTTPException(409, "Siz allaqachon bu kanalga obuna bo'lgansiz.")
 
 
 async def check_video(db, model, form):
@@ -56,7 +56,7 @@ async def check_like(db, model, form, current_user):
     )
     result = like.scalar()
     if result:
-        raise HTTPException(400, "Siz bu videoga allaqachon like bosgansiz.")
+        raise HTTPException(409, "Siz bu videoga allaqachon like bosgansiz.")
 
 
 async def check_comment(db, model, form, current_user):
@@ -67,7 +67,7 @@ async def check_comment(db, model, form, current_user):
     )
     result = like.scalar()
     if result:
-        raise HTTPException(400, "Siz bu videoga allaqachon izoh yozgansiz.")
+        raise HTTPException(409, "Siz bu videoga allaqachon izoh yozgansiz.")
 
 
 async def check_channel_video(db, model, current_user):
@@ -75,7 +75,7 @@ async def check_channel_video(db, model, current_user):
     result = channel.scalar()
 
     if result is None:
-        raise HTTPException(400, "Sizning kanal topilmadi. Avval kanal yarating.")
+        raise HTTPException(404, "Sizning kanal topilmadi. Avval kanal yarating.")
 
 
 async def check_video_title(db, model, title):

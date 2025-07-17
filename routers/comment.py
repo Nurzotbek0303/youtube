@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import delete
 
 from models.comment import Comment
@@ -13,46 +13,34 @@ from utils.check import check_comment_user
 comment_router = APIRouter()
 
 
-@comment_router.post("/post_comment")
+@comment_router.post("")
 async def izoh_yozish(
     form: SchemasComment,
     db: AsyncSession = Depends(database),
     current_user: SchemasUser = Depends(get_current_active_user),
 ):
-    try:
-        await create_comment(form, db, current_user)
-        return {"message": "Izoh yozildi."}
-
-    except Exception as err:
-        return {"message": "Xatolik bor!", "Error": str(err)}
+    await create_comment(form, db, current_user)
+    return {"message": "Izoh yozildi."}
 
 
-@comment_router.put("/put_comment")
+@comment_router.put("")
 async def izoh_tahrirlash(
+    ident: int,
     form: SchemasComment,
     db: AsyncSession = Depends(database),
     current_user: SchemasUser = Depends(get_current_active_user),
 ):
-    try:
-        await update_comment(form, db, current_user)
-        return {"message": "Izoh tahrirlandi."}
-
-    except Exception as err:
-        return {"message": "Xatolik bor!", "Error": str(err)}
+    await update_comment(ident, form, db, current_user)
+    return {"message": "Izoh tahrirlandi."}
 
 
-@comment_router.delete("/delete_comment")
+@comment_router.delete("")
 async def izoh_ochirish(
-    comment_id: int,
+    comment_id: str,
     db: AsyncSession = Depends(database),
     current_user: SchemasUser = Depends(get_current_active_user),
 ):
-    try:
-        await check_comment_user(db, comment_id, Comment, current_user)
-
-        await db.execute(delete(Comment).where(Comment.id == comment_id))
-        await db.commit()
-        return {"message": "Izoh ochirildi."}
-
-    except Exception as err:
-        return {"message": "Xatolik bor!", "Error": str(err)}
+    await check_comment_user(db, comment_id, Comment, current_user)
+    await db.execute(delete(Comment).where(Comment.id == comment_id))
+    await db.commit()
+    return {"message": "Izoh ochirildi."}
