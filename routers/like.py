@@ -18,7 +18,7 @@ from functions.like import create_like
 like_router = APIRouter()
 
 
-@like_router.post("")
+@like_router.post("{video_id}")
 async def like_bosish(
     form: SchemasLike,
     db: AsyncSession = Depends(database),
@@ -78,7 +78,7 @@ async def like_korish(
     ]
 
 
-@like_router.delete("")
+@like_router.delete("{ident}")
 async def like_ochirish(
     ident: int,
     db: AsyncSession = Depends(database),

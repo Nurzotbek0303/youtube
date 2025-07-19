@@ -21,7 +21,7 @@ from functions.subscription import create_subscription
 subscription_router = APIRouter()
 
 
-@subscription_router.post("/subscription")
+@subscription_router.post("/subscription/{channel_id:int}")
 async def obuna_bolish(
     form: SchemasSubscription,
     db: AsyncSession = Depends(database),
@@ -111,7 +111,7 @@ async def obuna_bolganlarni_korish(
     ]
 
 
-@subscription_router.delete("/subscription")
+@subscription_router.delete("/subscription/{ident:int}")
 async def obuna_ochirish(
     ident: int,
     db: AsyncSession = Depends(database),

@@ -19,7 +19,7 @@ from utils.check import check_history
 history_router = APIRouter()
 
 
-@history_router.post("")
+@history_router.post("{video_id:int}")
 async def tarix_qoshish(
     form: SchemasHistory,
     db: AsyncSession = Depends(database),
@@ -73,7 +73,7 @@ async def tomosha_tarixi(
     ]
 
 
-@history_router.delete("")
+@history_router.delete("{ident:int}")
 async def tarixni_tozalash(
     ident: int,
     db: AsyncSession = Depends(database),

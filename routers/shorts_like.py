@@ -16,7 +16,7 @@ from functions.shorts_like import create_shortsLike
 shorts_like_router = APIRouter()
 
 
-@shorts_like_router.post("")
+@shorts_like_router.post("{video_id:int}")
 async def shorts_like(
     form: SchemasShortsLike,
     db: AsyncSession = Depends(database),
@@ -29,7 +29,6 @@ async def shorts_like(
 
 @shorts_like_router.get("", response_model=List[ShortsLikeResp])
 async def shorts_like_korish(
-    ident: int = None,
     db: AsyncSession = Depends(database),
     current_user: SchemasUser = Depends(get_current_active_user),
 ):
@@ -46,35 +45,6 @@ async def shorts_like_korish(
     if not result:
         raise HTTPException(404, "Siz hech qanday shortsga like bosmagansiz.")
 
-    if ident is None:
-        query = await db.execute(
-            select(
-                ShortsLike.id,
-                User.username,
-                Shorts.id.label("shorts_id"),
-                Shorts.video_url,
-                ShortsLike.is_like,
-                ShortsLike.created_at,
-            )
-            .select_from(ShortsLike)
-            .join(User, User.id == ShortsLike.user_id)
-            .join(Shorts, Shorts.id == ShortsLike.video_id)
-            .where(ShortsLike.user_id == current_user.id)
-        )
-        rows = query.all()
-
-        return [
-            {
-                "id": row.id,
-                "username": row.username,
-                "shorts_id": row.shorts_id,
-                "video_url": row.video_url,
-                "is_like": row.is_like,
-                "created_at": row.created_at,
-            }
-            for row in rows
-        ]
-
     query = await db.execute(
         select(
             ShortsLike.id,
@@ -87,24 +57,24 @@ async def shorts_like_korish(
         .select_from(ShortsLike)
         .join(User, User.id == ShortsLike.user_id)
         .join(Shorts, Shorts.id == ShortsLike.video_id)
-        .where(ShortsLike.id == ident, ShortsLike.user_id == current_user.id)
+        .where(ShortsLike.user_id == current_user.id)
     )
-    row = query.first()
+    rows = query.all()
 
-    if not row:
-        raise HTTPException(404, "Bunday shorts like topilmadi.")
+    return [
+        {
+            "id": row.id,
+            "username": row.username,
+            "shorts_id": row.shorts_id,
+            "video_url": row.video_url,
+            "is_like": row.is_like,
+            "created_at": row.created_at,
+        }
+        for row in rows
+    ]
 
-    return {
-        "id": row.id,
-        "username": row.username,
-        "shorts_id": row.shorts_id,
-        "video_url": row.video_url,
-        "is_like": row.is_like,
-        "created_at": row.created_at,
-    }
 
-
-@shorts_like_router.delete("")
+@shorts_like_router.delete("{ident:int}")
 async def shorts_like_ochirish(
     ident: int,
     db: AsyncSession = Depends(database),

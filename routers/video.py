@@ -116,12 +116,6 @@ async def get_videos(
     ]
 
 
-@video_router.get("/videos/{video_id}", response_model=VideoResp)
-async def videolar(video_id: int, db: AsyncSession = Depends(database)):
-    query = await db.execute(select(Video.id).where(Video.id == video_id))
-    return query
-
-
 @video_router.get("/my/video", response_model=List[MyVideoResp])
 async def mening_videolarim(
     response: Response,
@@ -261,7 +255,7 @@ async def videolar_korish(
     ]
 
 
-@video_router.get("/video/comment", response_model=List[CommentResp])
+@video_router.get("/video/comment/{video_id}", response_model=List[CommentResp])
 async def video_comment_korish(
     response: Response, video_id: int, db: AsyncSession = Depends(database)
 ):

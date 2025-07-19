@@ -17,7 +17,7 @@ from functions.shorts_comment import create_shorts_comment, update_shortsComment
 shorts_commment_router = APIRouter()
 
 
-@shorts_commment_router.post("")
+@shorts_commment_router.post("{video_id:int}")
 async def shorts_comment_yozish(
     form: SchemasShortsComment,
     db: AsyncSession = Depends(database),
@@ -27,7 +27,7 @@ async def shorts_comment_yozish(
     return {"message": "Shorts comment yozildi."}
 
 
-@shorts_commment_router.get("", response_model=List[ShortsCommentResp])
+@shorts_commment_router.get("{shorts_id:int}", response_model=List[ShortsCommentResp])
 async def shorts_comment(shorts_id: int, db: AsyncSession = Depends(database)):
     shorts = await db.execute(select(Shorts).where(Shorts.id == shorts_id))
     result = shorts.scalar()
@@ -60,7 +60,7 @@ async def shorts_comment(shorts_id: int, db: AsyncSession = Depends(database)):
     ]
 
 
-@shorts_commment_router.put("")
+@shorts_commment_router.put("{ident:int}")
 async def shorts_comment_tahrirlash(
     ident: int,
     form: SchemasShortsComment,
@@ -72,7 +72,7 @@ async def shorts_comment_tahrirlash(
     return {"message": "Shorts comment tahrirlandi."}
 
 
-@shorts_commment_router.delete("")
+@shorts_commment_router.delete("{ident:int}")
 async def shorts_comment_ochirish(
     ident: int,
     db: AsyncSession = Depends(database),

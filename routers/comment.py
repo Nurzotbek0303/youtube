@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy import delete
 
 from models.comment import Comment
@@ -13,7 +13,7 @@ from utils.check import check_comment_user
 comment_router = APIRouter()
 
 
-@comment_router.post("")
+@comment_router.post("{video_id:int}")
 async def izoh_yozish(
     form: SchemasComment,
     db: AsyncSession = Depends(database),
@@ -23,7 +23,7 @@ async def izoh_yozish(
     return {"message": "Izoh yozildi."}
 
 
-@comment_router.put("")
+@comment_router.put("{ident:int}")
 async def izoh_tahrirlash(
     ident: int,
     form: SchemasComment,
@@ -34,7 +34,7 @@ async def izoh_tahrirlash(
     return {"message": "Izoh tahrirlandi."}
 
 
-@comment_router.delete("")
+@comment_router.delete("{comment_id:int}")
 async def izoh_ochirish(
     comment_id: str,
     db: AsyncSession = Depends(database),

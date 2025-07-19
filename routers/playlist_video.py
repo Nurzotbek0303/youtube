@@ -17,7 +17,7 @@ from functions.playlist_video import create_playlist_video
 playlist_video_router = APIRouter()
 
 
-@playlist_video_router.post("")
+@playlist_video_router.post("{playlist_id:int}")
 async def playlist_video_qoshish(
     form: SchemasPlaylistVideo,
     db: AsyncSession = Depends(database),
@@ -87,7 +87,7 @@ async def playlist_videoni_korish_barcha_uchun(db: AsyncSession = Depends(databa
     ]
 
 
-@playlist_video_router.delete("")
+@playlist_video_router.delete("{ident:int}")
 async def playlist_videoni_ochirish(
     ident: int,
     db: AsyncSession = Depends(database),

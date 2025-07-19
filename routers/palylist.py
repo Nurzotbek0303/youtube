@@ -86,7 +86,7 @@ async def barcha_korishi_mumkin(db: AsyncSession = Depends(database)):
     ]
 
 
-@playlist_router.put("")
+@playlist_router.put("{playlist_id:int}")
 async def playlist_tahrirlash(
     playlist_id: int,
     form: SchemasPlaylist,
@@ -97,7 +97,7 @@ async def playlist_tahrirlash(
     return {"message": "Playlist tahrirlandi."}
 
 
-@playlist_router.delete("")
+@playlist_router.delete("{ident:int}")
 async def playlistni_ochirish(
     ident: int,
     db: AsyncSession = Depends(database),
